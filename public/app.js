@@ -1,10 +1,15 @@
 const btnMensajes = document.getElementById("btnMensajes")
 const btnCalendario = document.getElementById("btnCalendario")
 const btnResumen = document.getElementById("btnResumen")
+const btnLogin = document.getElementById("btnLogin")
 
 const contenedorMensajes = document.getElementById("contenedorMensajes")
 const contenedorCalendario = document.getElementById("contenedorCalendario")
 const contenedorResumen = document.getElementById("contenedorResumen")
+const mensajeLogin = document.getElementById("mensajeLogin")
+
+const usuario = document.getElementById("usuario")
+const clave = document.getElementById("clave")
 
 btnMensajes.addEventListener("click", () => {
   cargarMensajes()
@@ -17,6 +22,38 @@ btnCalendario.addEventListener("click", () => {
 btnResumen.addEventListener("click", () => {
   cargarResumen()
 })
+
+btnLogin.addEventListener("click", () => {
+  hacerLogin()
+})
+
+async function hacerLogin() {
+  try {
+    const datosLogin = {
+      usuario: usuario.value,
+      clave: clave.value
+    }
+
+    const respuesta = await fetch("/api/login", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify(datosLogin)
+    })
+
+    const datos = await respuesta.json()
+
+    mensajeLogin.textContent = datos.mensaje
+
+    if (respuesta.ok) {
+      localStorage.setItem("tokenDemo", datos.token)
+      localStorage.setItem("rolDemo", datos.rol)
+    }
+  } catch (error) {
+    mensajeLogin.textContent = "No fue posible realizar el login pedagógico. Revisa el servidor."
+  }
+}
 
 async function cargarMensajes() {
   try {
