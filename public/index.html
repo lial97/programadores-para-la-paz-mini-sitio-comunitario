@@ -6,10 +6,11 @@
   <title>Programadores para la Paz — Mini-sitio Comunitario</title>
 
   <!--
-    Fuentes de Google Fonts (se cargan desde internet):
-    - Playfair Display: serif elegante para títulos (header, h2, tarjetas)
-    - DM Sans: sans-serif limpia para el cuerpo de texto
-    Las dos líneas de "preconnect" aceleran la conexión inicial.
+    FUENTES (Google Fonts, se cargan desde internet):
+    - Playfair Display: serif elegante para títulos y el header principal.
+    - DM Sans: sans-serif limpia y moderna para el cuerpo de texto.
+    Las líneas "preconnect" abren la conexión al servidor de Google antes de
+    que el navegador necesite los archivos, lo que acelera la carga.
   -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -20,11 +21,12 @@
 </head>
 <body>
 
-  <!-- =========================================================
+  <!-- ==========================================================
        HEADER PRINCIPAL
-       Contiene: barra superior, título + decoración, navegación.
-       Todos los estilos están en styles.css bajo /* HEADER */
-  ========================================================= -->
+       Siempre visible en la parte superior de la página.
+       Contiene: franja de estado, título + decoración, navegación.
+       Todos sus estilos están en la sección "/* 2. HEADER */" de styles.css.
+  ========================================================== -->
   <header class="header-principal">
 
     <!-- Franja oscura superior con etiquetas de estado del proyecto -->
@@ -33,14 +35,17 @@
       <span class="header-tag">Semana 5</span>
     </div>
 
-    <!-- Zona central: texto a la izquierda, decoración geométrica a la derecha -->
+    <!-- Zona central: texto a la izquierda, adorno geométrico a la derecha -->
     <div class="header-contenido">
 
       <div class="header-texto">
-        <!-- Pequeño texto encima del título -->
+        <!-- Texto pequeño sobre el título principal (eyebrow) -->
         <p class="header-eyebrow">Mini-sitio comunitario</p>
 
-        <!-- Título principal. <em> pone "para la Paz" en itálica dorada -->
+        <!--
+          Título principal del sitio.
+          <em> aplica la clase itálica dorada a "para la Paz".
+        -->
         <h1 class="header-titulo">Programadores<br><em>para la Paz</em></h1>
 
         <p class="header-subtitulo">
@@ -48,71 +53,176 @@
         </p>
       </div>
 
-  </header><!-- fin header -->
+      <!--
+        Decoración geométrica animada (dos círculos giratorios + palabra "PAZ").
+        Solo visible en pantallas medianas y grandes.
+        En móvil se oculta con display:none (ver @media en styles.css).
+      -->
 
 
-  <!-- =========================================================
+    </div><!-- fin .header-contenido -->
+
+    <!--
+      Barra de navegación interna.
+      Los tres links apuntan a los ids de las tres secciones:
+      #login, #mensajes, #calendario.
+      La clase "activo" se añade/quita por JS en app.js
+      usando IntersectionObserver para detectar cuál sección es visible.
+    -->
+
+
+  </header><!-- fin .header-principal -->
+
+
+  <!-- ==========================================================
        CONTENIDO PRINCIPAL
-       Agrupa las tres secciones de la página.
-       max-width y centrado están definidos en styles.css (main).
-  ========================================================= -->
+       Contiene las tres secciones del sitio en el orden pedido:
+         1. Login
+         2. Mensajes comunitarios
+         3. Calendario editorial
+       El centrado y máx-width están definidos en "/* 3. MAIN */" de styles.css.
+  ========================================================== -->
   <main>
 
-    <!-- =======================================================
-         SECCIÓN 1: TABLERO DE MENSAJES
+
+    <!-- ========================================================
+         SECCIÓN 1: INICIO DE SESIÓN (LOGIN)
          
-         Carrusel MANUAL (el usuario navega con las flechas).
-         Los datos vienen del servidor: GET /api/mensajes
-         → lee el archivo /data/mensajes.json
+         Formulario de demostración — no conecta a un backend real.
+         Toda la lógica de validación está en app.js (bloque A).
+         
+         Credenciales de prueba: admin / paz2025
          
          Flujo:
-           1. Usuario hace clic en "Cargar mensajes"
-           2. app.js hace fetch("/api/mensajes")
-           3. Se construye el carrusel dentro de #contenedorMensajes
-           4. El botón pasa a "▲ Ocultar mensajes"
-           5. Clics siguientes colapsan/expanden el contenedor
-    ======================================================= -->
-    <section id="mensajes" class="seccion">
+           1. Usuario escribe usuario y contraseña.
+           2. Hace clic en "Iniciar sesión".
+           3. app.js compara con las credenciales hardcodeadas.
+           4. Si son correctas → scroll suave a #mensajes.
+           5. Si son incorrectas → mensaje de error rojo + animación de sacudida.
+    ======================================================== -->
+    <section id="login" class="seccion seccion-login">
 
-      <!-- Cabecera fija de la sección (siempre visible) -->
-      <div class="seccion-cabeza">
-        <h2 class="seccion-titulo">Tablero de mensajes comunitarios</h2>
-        <p class="seccion-desc">Vitrina comunitaria con información clara, legible y responsable. Navega tú el ritmo.</p>
+      <!-- se puede agregar un icono decorativo Ícono decorativo grande en la parte superior de la tarjeta -->
+      <!-- <div class="login-icono" aria-hidden="true">🔐</div>-->
+
+      <h2 class="seccion-titulo login-titulo">Inicio de sesión</h2>
+      <p class="seccion-desc login-desc">Accede para ver los mensajes y el calendario comunitario.</p>
+
+      <!--
+        Formulario de login.
+        IMPORTANTE: No usa la etiqueta <form> para evitar recargas de página.
+        app.js escucha el clic en #btnLogin con addEventListener.
+        
+        Los atributos "autocomplete" ayudan al navegador a ofrecer
+        autocompletado correcto (nombre de usuario / contraseña actual).
+      -->
+      <div class="login-caja">
+
+        <!-- Campo: nombre de usuario -->
+        <div class="login-campo">
+          <label for="inputUsuario" class="login-label">Usuario</label>
+          <input
+            type="text"
+            id="inputUsuario"
+            class="login-input"
+            placeholder="Ingresa tu usuario"
+            autocomplete="username"
+          >
+        </div>
+
+        <!-- Campo: contraseña -->
+        <div class="login-campo">
+          <label for="inputPassword" class="login-label">Contraseña</label>
+          <input
+            type="password"
+            id="inputPassword"
+            class="login-input"
+            placeholder="Ingresa tu contraseña"
+            autocomplete="current-password"
+          >
+        </div>
 
         <!--
-          Botón principal de la sección.
-          app.js escucha el clic con: btnMensajes.addEventListener("click", ...)
-          La clase "abierto" se añade por JS cuando el carrusel está visible
-          (cambia el color del botón a gris).
+          Área de error: empieza oculta (display:none en styles.css).
+          app.js la muestra con style.display = "block" cuando las
+          credenciales son incorrectas, y le pone el texto del error.
+        -->
+        <p id="loginError" class="login-error" role="alert" aria-live="polite" style="display:none;"></p>
+
+        <!--
+          Botón principal de login. Color azul (#2563eb) — estándar de login.
+          app.js escucha el clic con: btnLogin.addEventListener("click", ...)
+          La clase "sacudir" activa la animación de error (ver styles.css).
+        -->
+        <button id="btnLogin" class="btn-login">Iniciar sesión</button>
+
+        <!-- Credenciales de demo visibles para el evaluador/tester -->
+        <p class="login-demo-hint">
+          Demo: usuario <strong>admin</strong> · contraseña <strong>paz2025</strong>
+        </p>
+
+      </div><!-- fin .login-caja -->
+
+    </section><!-- fin #login -->
+
+
+    <!-- ========================================================
+         SECCIÓN 2: TABLERO DE MENSAJES COMUNITARIOS
+         
+         Carrusel MANUAL: el usuario navega con las flechas ← →.
+         Los datos vienen del servidor: GET /api/mensajes
+         → el servidor lee /data/mensajes.json
+         
+         Flujo:
+           1. Usuario hace clic en "Cargar mensajes".
+           2. app.js hace fetch("/api/mensajes").
+           3. Se construyen las tarjetas dentro de #mensajesTrack.
+           4. El botón cambia a "▲ Ocultar mensajes".
+           5. Clics siguientes alternan entre ocultar y mostrar.
+    ======================================================== -->
+    <section id="mensajes" class="seccion">
+
+      <!-- Cabecera: siempre visible aunque el carrusel esté colapsado -->
+      <div class="seccion-cabeza">
+        <h2 class="seccion-titulo">Tablero de mensajes comunitarios</h2>
+        <p class="seccion-desc">Vitrina comunitaria con información clara, legible y responsable. Navega a tu ritmo.</p>
+
+        <!--
+          Botón de carga / toggle.
+          - 1er clic: carga datos y muestra el carrusel.
+          - Clic siguiente: colapsa o expande el contenedor.
+          La clase "abierto" (añadida por JS) lo vuelve gris para
+          indicar visualmente que un clic lo cerrará.
         -->
         <button id="btnMensajes" class="btn-principal">Cargar mensajes</button>
       </div>
 
       <!--
-        Contenedor del carrusel de mensajes.
-        Arranca oculto (display:none). JS lo muestra después de cargar los datos.
-        La clase "colapsado" (añadida/quitada por JS) activa la animación de cierre.
+        Contenedor del carrusel.
+        Arranca oculto (style="display:none").
+        JS lo muestra al cargar los datos.
+        La clase "colapsado" activa la transición de cierre del CSS.
       -->
       <div id="contenedorMensajes" class="carrusel-wrapper" style="display:none;">
 
-        <!-- Ventana del carrusel: solo muestra una tarjeta a la vez -->
+        <!-- Ventana visible: recorta el contenido que se sale -->
         <div class="carrusel">
           <!--
             Track: fila horizontal de tarjetas.
-            JS lo mueve con: track.style.transform = "translateX(-N%)"
+            JS lo desplaza con: track.style.transform = "translateX(-N%)"
             Las tarjetas se inyectan aquí dinámicamente por app.js.
           -->
           <div class="carrusel-track" id="mensajesTrack"></div>
         </div>
 
-        <!-- Controles de navegación manual -->
+        <!-- Controles de navegación: ← puntos → -->
         <div class="carrusel-controles">
           <button class="ctrl-btn" id="btnMsgPrev" aria-label="Mensaje anterior">&#8592;</button>
 
           <!--
-            Contenedor de los puntos indicadores (●).
+            Contenedor de puntos (dots).
             app.js inyecta aquí un <button class="indicador"> por cada mensaje.
-            El punto del mensaje actual tiene la clase "activo".
+            El punto activo tiene la clase "activo".
           -->
           <div class="carrusel-indicadores" id="mensajesIndicadores"></div>
 
@@ -125,7 +235,7 @@
       </div><!-- fin #contenedorMensajes -->
 
       <!--
-        Texto provisional que se muestra antes de cargar los datos.
+        Texto provisional visible antes de cargar los datos.
         app.js lo oculta con: mensajesPlaceholder.style.display = "none"
       -->
       <p id="mensajesPlaceholder" class="placeholder-txt">
@@ -135,21 +245,21 @@
     </section><!-- fin #mensajes -->
 
 
-    <!-- =======================================================
-         SECCIÓN 2: CALENDARIO EDITORIAL
+    <!-- ========================================================
+         SECCIÓN 3: CALENDARIO EDITORIAL
          
-         Carrusel AUTOMÁTICO: cambia de slide cada 15 segundos.
+         Carrusel AUTOMÁTICO: cambia de tarjeta cada 15 segundos.
          Los datos vienen del servidor: GET /api/calendario
-         → lee el archivo /data/calendario-editorial.json
+         → el servidor lee /data/calendario-editorial.json
          
-         Diferencias con mensajes:
-           - Tiene barra de progreso que muestra el tiempo restante
-           - El autoplay se pausa al colapsar y reanuda al expandir
-           - Al navegar con flechas/dots, el contador de 15 s se reinicia
-    ======================================================= -->
+         Diferencias clave respecto a mensajes:
+           - Tiene barra de progreso visual que cuenta los 15 s.
+           - El autoplay se pausa al colapsar y reanuda al expandir.
+           - Al navegar con flechas/puntos, el contador de 15 s se reinicia.
+    ======================================================== -->
     <section id="calendario" class="seccion seccion-calendario">
 
-      <!-- Cabecera fija de la sección -->
+      <!-- Cabecera: siempre visible -->
       <div class="seccion-cabeza">
         <h2 class="seccion-titulo">Calendario editorial</h2>
         <p class="seccion-desc">
@@ -165,12 +275,14 @@
       <div id="contenedorCalendario" class="carrusel-wrapper" style="display:none;">
 
         <div class="carrusel">
-          <!-- Track del calendario. app.js inyecta las tarjetas aquí. -->
+          <!--
+            Track del calendario.
+            app.js inyecta aquí las tarjetas de cada pieza editorial.
+          -->
           <div class="carrusel-track" id="carruselTrack"></div>
         </div>
 
-        <!-- Controles de navegación (también funcionan en modo autoplay,
-             y reinician el contador de 15 s al usarse) -->
+        <!-- Controles: funcionan también durante el autoplay y reinician el contador -->
         <div class="carrusel-controles">
           <button class="ctrl-btn" id="btnPrev" aria-label="Anterior">&#8592;</button>
           <div class="carrusel-indicadores" id="indicadores"></div>
@@ -180,14 +292,14 @@
         <!--
           Barra de progreso del autoplay.
           .barra-progreso es el fondo gris (contenedor).
-          .barra-relleno es la parte que se llena de verde a dorado en 15 s.
-          app.js controla el ancho de #barraRelleno con style.width.
+          .barra-relleno es la parte verde-dorada que crece en 15 s.
+          app.js controla el ancho de #barraRelleno con style.width y style.transition.
         -->
         <div class="barra-progreso">
           <div class="barra-relleno" id="barraRelleno"></div>
         </div>
 
-        <p class="carrusel-hint">Cambia automáticamente cada 15 s</p>
+        <p class="carrusel-hint">Cambia automáticamente cada 15 s · puedes navegar con las flechas</p>
 
       </div><!-- fin #contenedorCalendario -->
 
@@ -198,14 +310,14 @@
     </section><!-- fin #calendario -->
 
 
-    <!-- =======================================================
-         SECCIÓN 3: AVISO DE SEGURIDAD
+    <!-- ========================================================
+         SECCIÓN: AVISO DE SEGURIDAD
          
          Sección informativa estática (sin interactividad).
          Recuerda que la vista pública no expone datos personales.
-    ======================================================= -->
+    ======================================================== -->
     <section id="seguridad" class="seccion aviso-seguridad">
-      <div class="aviso-icono">🔒</div>
+      <div class="aviso-icono" aria-hidden="true">🔒</div>
       <div>
         <h2 class="seccion-titulo">Seguridad visual y minimización de datos</h2>
         <p>
@@ -224,9 +336,10 @@
   </footer>
 
   <!--
-    Script principal cargado al final del body.
+    Script principal cargado AL FINAL del <body>.
     Cargarlo aquí (y no en el <head>) garantiza que todos los elementos
     del DOM ya existen cuando el script intenta acceder a ellos con getElementById.
+    Si se cargara en el <head>, los getElementById devolverían null.
   -->
   <script src="app.js"></script>
 

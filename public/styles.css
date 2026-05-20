@@ -1,53 +1,57 @@
 /* =============================================================
    styles.css — Estilos del Mini-sitio Comunitario
    
-   Organización del archivo:
-     1. Variables y reset global
-     2. Header (barra superior, título, decoración, nav)
-     3. Contenedor principal (main)
-     4. Secciones genéricas
-     5. Botón principal
-     6. Tablero de mensajes (clases heredadas, ya no se usa como grid)
-     7. Badge de fecha (mensajes)
-     8. Carrusel (wrapper, track, tarjetas, controles, barra)
-     9. Aviso de seguridad
-    10. Pie de página
-    11. Responsivo (móvil ≤ 700px)
+   ÍNDICE DE SECCIONES:
+     1.  Variables y reset global
+     2.  Header (barra superior, título, decoración, nav)
+     3.  Contenedor principal (main)
+     4.  Secciones genéricas
+     5.  Botón principal (verde, toggle)
+     6.  LOGIN — tarjeta de inicio de sesión
+     7.  Tablero de mensajes (clases heredadas)
+     8.  Badge de fecha (mensajes)
+     9.  Carrusel (wrapper, track, tarjetas, controles, barra)
+    10.  Aviso de seguridad
+    11.  Pie de página
+    12.  Responsivo (móvil ≤ 700px)
 ============================================================= */
 
 
 /* =============================================================
    1. VARIABLES Y RESET GLOBAL
    
-   :root define variables CSS reutilizables en todo el archivo.
-   Para cambiar la paleta de colores, solo edita aquí.
-   *, *::before, *::after aplica box-sizing a todos los elementos
-   para que padding y border no desborden el ancho declarado.
+   :root define las variables CSS reutilizables en todo el archivo.
+   Para cambiar la paleta de colores del sitio, solo edita aquí.
+   *, *::before, *::after aplica box-sizing:border-box a TODOS los
+   elementos para que padding y border no desborden el ancho declarado.
 ============================================================= */
 :root {
-  --verde:       #1a6b3c;   /* color principal (botones, títulos, acentos) */
-  --verde-claro: #2d9155;   /* verde más luminoso para hover */
-  --verde-palido:#e8f5ee;   /* fondo suave en secciones de calendario */
-  --crema:       #faf8f3;   /* fondo general de la página */
-  --negro:       #111810;   /* texto principal */
-  --gris:        #5a6157;   /* texto secundario y etiquetas */
-  --gris-claro:  #dde5da;   /* bordes suaves */
-  --acento:      #c8a84b;   /* dorado para detalles y barra de progreso */
-  --acento-suave:#f5edd6;   /* fondo dorado muy claro */
-  --blanco:      #ffffff;
-  --radio:       12px;      /* radio de borde estándar para tarjetas */
-  --sombra:      0 4px 24px rgba(26,107,60,.10);  /* sombra verde suave */
+  --verde:        #2b7d5e;   /* color principal: botones, títulos, acentos */
+  --verde-claro:  #2d9155;   /* verde más luminoso para estados hover */
+  --verde-palido: #e8f5ee;   /* fondo suave en la sección de calendario */
+  --crema:        #F7F4ED;   /* fondo general de la página */
+  --negro:        #111810;   /* color del texto principal */
+  --gris:         #5a6157;   /* texto secundario y etiquetas */
+  --gris-claro:   #dde5da;   /* bordes y fondos sutiles */
+  --acento:       #c8a84b;   /* dorado para detalles y barra de progreso */
+  --acento-suave: #f5edd6;   /* dorado muy claro para fondos */
+  --azul-login:   #2563eb;   /* azul estándar para el botón de login */
+  --azul-hover:   #1d4ed8;   /* azul más oscuro para hover del login */
+  --blanco:       #ffffff;
+  --radio:        12px;      /* radio de borde estándar en tarjetas */
+  --sombra:       0 4px 24px rgba(26,107,60,.10);  /* sombra verde suave */
 }
 
-/* Reset mínimo: quita márgenes y padding por defecto, unifica box-sizing */
+/* Reset mínimo: elimina márgenes y padding del navegador,
+   unifica box-sizing en todos los elementos */
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-/* scroll-behavior: smooth hace que los links de ancla (#mensajes, #calendario)
-   naveguen con deslizamiento suave en vez de saltar de golpe */
+/* scroll-behavior: smooth hace que los enlaces de ancla (#login, #mensajes, etc.)
+   naveguen con deslizamiento suave en lugar de saltar abruptamente */
 html { scroll-behavior: smooth; }
 
 body {
-  font-family: 'DM Sans', sans-serif;   /* fuente importada desde Google Fonts */
+  font-family: 'DM Sans', sans-serif;  /* fuente importada en el <head> */
   background: var(--crema);
   color: var(--negro);
   line-height: 1.6;
@@ -58,24 +62,25 @@ body {
 /* =============================================================
    2. HEADER
    
-   Estructura HTML:
+   Estructura HTML del header:
      .header-principal
-       .header-top-bar      → franja oscura superior con etiquetas
-       .header-contenido    → título + decoración geométrica
+       .header-top-bar       → franja oscura con etiquetas de estado
+       .header-contenido     → título (izquierda) + círculos decorativos (derecha)
          .header-texto
-         .header-deco       → círculos animados con "PAZ"
-       .header-nav          → links de navegación interna
+         .header-deco        → dos círculos animados + palabra "PAZ"
+       .header-nav           → links de navegación a las tres secciones
 ============================================================= */
 
-/* Contenedor principal del header con fondo verde */
+/* Contenedor principal del header — fondo verde oscuro con desbordamiento
+   recortado para que los círculos decorativos no salgan de él */
 .header-principal {
   background: var(--verde);
   color: var(--blanco);
-  position: relative;   /* necesario para el ::before de textura */
-  overflow: hidden;     /* recorta los círculos decorativos que sobresalen */
+  position: relative;     /* necesario para el ::before decorativo */
+  overflow: hidden;       /* recorta los círculos que sobresalen */
 }
 
-/* Franja muy oscura en la parte superior con las etiquetas de estado */
+/* Franja muy oscura en la parte superior con las etiquetas de estado del proyecto */
 .header-top-bar {
   display: flex;
   gap: 12px;
@@ -90,17 +95,18 @@ body {
   opacity: .85;
 }
 
-/* Zona central del header: texto a la izquierda, decoración a la derecha */
+/* Zona central del header: texto a la izquierda, decoración a la derecha.
+   space-between los separa al máximo. */
 .header-contenido {
   display: flex;
   align-items: center;
   justify-content: space-between;
   padding: 48px 40px 36px;
   position: relative;
-  z-index: 2;   /* queda encima del ::before de textura */
+  z-index: 2;   /* queda encima de la capa ::before de gradientes */
 }
 
-/* Texto pequeño encima del título principal */
+/* Texto pequeño en mayúsculas encima del título ("Mini-sitio comunitario") */
 .header-eyebrow {
   font-size: .78rem;
   letter-spacing: .18em;
@@ -109,7 +115,7 @@ body {
   margin-bottom: 10px;
 }
 
-/* Título "Programadores / para la Paz"
+/* Título "Programadores / para la Paz".
    clamp(mín, preferido, máx) escala el tamaño según el ancho de pantalla */
 .header-titulo {
   font-family: 'Playfair Display', serif;
@@ -119,7 +125,7 @@ body {
   margin-bottom: 16px;
 }
 
-/* "para la Paz" en itálica dorada */
+/* La parte "<em>para la Paz</em>" se muestra en itálica dorada */
 .header-titulo em {
   color: var(--acento);
   font-style: italic;
@@ -132,7 +138,8 @@ body {
   font-weight: 300;
 }
 
-/* --- Decoración geométrica (círculos + "PAZ") --- */
+/* --- Decoración geométrica --- */
+/* Contenedor de los dos círculos y la palabra "PAZ" */
 .header-deco {
   position: relative;
   width: 200px;
@@ -140,13 +147,14 @@ body {
   flex-shrink: 0;   /* no se encoge en pantallas medianas */
 }
 
+/* Estilos compartidos por los dos círculos */
 .deco-circulo {
   position: absolute;
   border-radius: 50%;
   border: 2px solid rgba(200,168,75,.35);
 }
 
-/* Círculo grande exterior — gira en sentido horario */
+/* Círculo exterior grande — gira en sentido horario, 20 s por vuelta */
 .deco-circulo.grande {
   width: 160px; height: 160px;
   top: 10px; right: 0;
@@ -154,7 +162,7 @@ body {
   animation: giraDespacio 20s linear infinite;
 }
 
-/* Círculo mediano interior — gira en sentido antihorario */
+/* Círculo interior mediano — gira al revés (reverse), más rápido */
 .deco-circulo.mediano {
   width: 90px; height: 90px;
   top: 45px; right: 35px;
@@ -162,11 +170,11 @@ body {
   animation: giraDespacio 12s linear infinite reverse;
 }
 
-/* Texto "PAZ" centrado sobre los círculos */
+/* Palabra "PAZ" centrada sobre los círculos con transform: translate */
 .deco-palabra {
   position: absolute;
   top: 50%; left: 50%;
-  transform: translate(-50%,-50%);   /* centrado perfecto */
+  transform: translate(-50%,-50%);   /* centrado perfecto horizontal y vertical */
   font-family: 'Playfair Display', serif;
   font-size: 2.2rem;
   font-weight: 900;
@@ -174,12 +182,13 @@ body {
   letter-spacing: .12em;
 }
 
-/* Animación de rotación continua (se reutiliza en ambos círculos) */
+/* Animación reutilizable: una vuelta completa de 0 a 360 grados */
 @keyframes giraDespacio {
   to { transform: rotate(360deg); }
 }
 
-/* --- Barra de navegación interna del header --- */
+/* --- Barra de navegación interna --- */
+/* Los tres links apuntan a #login, #mensajes y #calendario */
 .header-nav {
   display: flex;
   gap: 4px;
@@ -204,8 +213,16 @@ body {
   color: var(--blanco);
 }
 
-/* Capa de gradientes decorativos sobre el fondo del header
-   ::before es un pseudo-elemento que no ocupa espacio en el DOM */
+/* La clase "activo" la añade/quita app.js con IntersectionObserver
+   para resaltar el link de la sección actualmente visible */
+.nav-link.activo {
+  background: rgba(255,255,255,.2);
+  color: var(--blanco);
+  border-color: rgba(255,255,255,.4);
+}
+
+/* Capa de gradientes decorativos sobre el fondo del header.
+   ::before es un pseudo-elemento invisible al DOM (no ocupa espacio). */
 .header-principal::before {
   content: '';
   position: absolute;
@@ -213,16 +230,16 @@ body {
   background-image:
     radial-gradient(ellipse at 80% 50%, rgba(200,168,75,.12) 0%, transparent 60%),
     radial-gradient(ellipse at 20% 80%, rgba(255,255,255,.05) 0%, transparent 50%);
-  pointer-events: none;   /* no interfiere con clics */
+  pointer-events: none;   /* no interfiere con clics ni hover */
 }
 
 
 /* =============================================================
-   3. CONTENEDOR PRINCIPAL
+   3. CONTENEDOR PRINCIPAL (main)
    
-   Limita el ancho de contenido a 1040px y lo centra.
+   Limita el ancho a 1040px y centra el contenido con margin: auto.
    display:flex con flex-direction:column apila las secciones
-   con un gap (espacio) de 32px entre ellas.
+   con un espacio de 32px entre ellas.
 ============================================================= */
 main {
   max-width: 1040px;
@@ -238,7 +255,8 @@ main {
    4. SECCIONES GENÉRICAS
    
    Cada <section> tiene fondo blanco, borde, sombra y radio.
-   .seccion-cabeza es el bloque de título + descripción + botón.
+   .seccion-cabeza es el bloque de título + descripción + botón
+   que siempre permanece visible (no colapsa).
 ============================================================= */
 .seccion {
   background: var(--blanco);
@@ -252,7 +270,7 @@ main {
   margin-bottom: 28px;
 }
 
-/* Títulos de sección (h2) con fuente serif y color verde */
+/* Títulos h2 de sección con fuente serif y color verde */
 .seccion-titulo {
   font-family: 'Playfair Display', serif;
   font-size: 1.55rem;
@@ -267,7 +285,7 @@ main {
   margin-bottom: 18px;
 }
 
-/* Texto en cursiva que aparece antes de cargar el contenido */
+/* Texto en cursiva que se muestra antes de cargar el contenido */
 .placeholder-txt {
   color: var(--gris);
   font-style: italic;
@@ -278,11 +296,13 @@ main {
 
 
 /* =============================================================
-   5. BOTÓN PRINCIPAL
+   5. BOTÓN PRINCIPAL (verde)
    
-   .btn-principal → estado normal (verde)
-   .btn-principal.abierto → cuando el contenido está visible (gris)
-   El color cambia en app.js añadiendo/quitando la clase "abierto".
+   .btn-principal           → estado normal (verde oscuro)
+   .btn-principal:hover     → verde más claro + sube 1px
+   .btn-principal.abierto   → gris (indica que un clic cerrará el contenido)
+   
+   La clase "abierto" la añade/quita app.js según el estado del carrusel.
 ============================================================= */
 .btn-principal {
   display: inline-flex;
@@ -302,15 +322,14 @@ main {
 
 .btn-principal:hover {
   background: var(--verde-claro);
-  transform: translateY(-1px);   /* sube 1px al pasar el ratón */
+  transform: translateY(-1px);   /* efecto de elevación al hacer hover */
 }
 
 .btn-principal:active {
-  transform: translateY(0);   /* vuelve a su lugar al hacer clic */
+  transform: translateY(0);   /* vuelve a su posición al hacer clic */
 }
 
-/* Estado "abierto": el botón se vuelve gris para indicar que
-   un segundo clic lo cerrará */
+/* Estado "abierto": el botón se vuelve gris para señalar que cerrará el carrusel */
 .btn-principal.abierto {
   background: var(--gris);
 }
@@ -320,12 +339,166 @@ main {
 
 
 /* =============================================================
-   6. TABLERO DE MENSAJES
+   6. LOGIN — Tarjeta de inicio de sesión
    
-   Estas clases son herencia del diseño anterior.
+   Estructura HTML dentro de #login:
+     .seccion.seccion-login
+       .login-icono       → emoji 🔐 decorativo
+       h2.login-titulo
+       p.login-desc
+       .login-caja        → contenedor del formulario
+         .login-campo × 2 → etiqueta + input
+         #loginError       → mensaje de error (oculto por defecto)
+         #btnLogin         → botón azul
+         .login-demo-hint  → texto con credenciales de demo
+============================================================= */
+
+/* La sección de login tiene un fondo azul muy suave y sombra azul */
+.seccion-login {
+  background: var(--blanco);
+  border-color: #bfdbfe;
+  box-shadow: 0 4px 24px rgba(37,99,235,.08);
+  text-align: center;
+}
+
+/* Ícono grande decorativo en la parte superior de la tarjeta */
+.login-icono {
+  font-size: 3rem;
+  margin-bottom: 16px;
+  display: block;
+}
+
+/* El título del login sobreescribe el color verde por azul oscuro */
+.login-titulo {
+  color: #1e3a5f;
+}
+
+.login-desc {
+  max-width: 360px;
+  margin: 0 auto 24px;
+}
+
+/* Caja que contiene los inputs, error y botón — centrada con max-width */
+.login-caja {
+  max-width: 360px;
+  margin: 0 auto;
+  text-align: left;   /* el texto dentro de los campos se alinea a la izquierda */
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+/* Contenedor de cada par etiqueta + input */
+.login-campo {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+/* Etiqueta visible encima de cada input */
+.login-label {
+  font-size: .85rem;
+  font-weight: 500;
+  color: #374151;
+}
+
+/* Input de texto / contraseña */
+.login-input {
+  padding: 11px 14px;
+  border: 1.5px solid #d1d5db;
+  border-radius: 8px;
+  font-family: 'DM Sans', sans-serif;
+  font-size: .95rem;
+  color: var(--negro);
+  background: var(--blanco);
+  transition: border-color .2s, box-shadow .2s;
+  outline: none;
+}
+
+/* El borde del input se vuelve azul al tener el foco */
+.login-input:focus {
+  border-color: var(--azul-login);
+  box-shadow: 0 0 0 3px rgba(37,99,235,.12);
+}
+
+/* Mensaje de error — oculto por defecto (display:none).
+   app.js lo muestra con style.display = "block" cuando las credenciales son incorrectas. */
+.login-error {
+  display: none;             /* oculto por defecto */
+  color: #dc2626;            /* rojo accesible */
+  background: #fef2f2;       /* fondo rojo muy suave */
+  border: 1px solid #fecaca;
+  border-radius: 8px;
+  padding: 10px 14px;
+  font-size: .88rem;
+  text-align: center;
+}
+
+/* Botón "Iniciar sesión" — azul estándar de formularios de acceso */
+.btn-login {
+  width: 100%;
+  padding: 12px;
+  background: var(--azul-login);
+  color: var(--blanco);
+  border: none;
+  border-radius: 8px;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background .2s, transform .1s, box-shadow .2s;
+  margin-top: 4px;
+}
+
+.btn-login:hover {
+  background: var(--azul-hover);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 16px rgba(37,99,235,.25);
+}
+
+.btn-login:active {
+  transform: translateY(0);
+}
+
+/* Texto pequeño con las credenciales de demo al pie del formulario */
+.login-demo-hint {
+  text-align: center;
+  font-size: .8rem;
+  color: var(--gris);
+  padding: 8px;
+  background: #f8fafc;
+  border-radius: 6px;
+  border: 1px solid var(--gris-claro);
+}
+
+.login-demo-hint strong {
+  color: var(--negro);
+  font-family: monospace;   /* fuente monoespaciada para resaltar los valores */
+}
+
+/*
+  Animación de "sacudida" para el formulario al ingresar credenciales incorrectas.
+  app.js añade la clase "sacudir" a .login-caja y la quita con setTimeout.
+*/
+@keyframes sacudir {
+  0%, 100% { transform: translateX(0); }
+  20%       { transform: translateX(-8px); }
+  40%       { transform: translateX(8px); }
+  60%       { transform: translateX(-6px); }
+  80%       { transform: translateX(6px); }
+}
+
+.login-caja.sacudir {
+  animation: sacudir .45s ease;
+}
+
+
+/* =============================================================
+   7. TABLERO DE MENSAJES (clases heredadas)
+   
+   Estas clases son del diseño anterior.
    .tablero ya no se usa como grid principal, pero .tarjeta-mensaje,
-   .etiqueta y .texto-secundario siguen disponibles si se necesitan
-   en otras partes del sitio.
+   .etiqueta y .texto-secundario siguen disponibles si se necesitan.
 ============================================================= */
 .tablero {
   display: grid;
@@ -333,15 +506,15 @@ main {
 }
 
 .tarjeta-mensaje {
-  background: var(--crema);
+  background: #eff6ff;
   border: 1px solid var(--gris-claro);
-  border-left: 5px solid var(--verde);   /* línea verde decorativa a la izquierda */
+  border-left: 5px solid var(--verde);   /* acento verde a la izquierda */
   padding: 20px 22px;
   border-radius: 8px;
   animation: aparecer .35s ease both;
 }
 
-/* Animación de entrada: aparece subiendo desde abajo */
+/* Animación de entrada: sube desde abajo mientras aparece */
 @keyframes aparecer {
   from { opacity: 0; transform: translateY(10px); }
   to   { opacity: 1; transform: translateY(0); }
@@ -372,7 +545,7 @@ main {
   color: var(--gris);
 }
 
-/* Texto menos importante (fuente, observaciones) */
+/* Texto de menor importancia (fuente, observaciones) */
 .texto-secundario {
   color: var(--gris);
   font-size: .85rem;
@@ -380,14 +553,14 @@ main {
 
 
 /* =============================================================
-   7. BADGE DE FECHA (mensajes)
+   8. BADGE DE FECHA (mensajes)
    
    Pequeña etiqueta dorada que muestra la fecha de cada mensaje.
    Aparece debajo del contador "Mensaje 01 de 03".
 ============================================================= */
 .msg-fecha-badge {
   display: inline-block;
-  background: var(--acento-suave);
+  background: var(--blanco);
   border: 1px solid rgba(200,168,75,.35);
   color: #7a5c1a;
   font-size: .8rem;
@@ -398,7 +571,7 @@ main {
   letter-spacing: .03em;
 }
 
-/* Cuerpo del mensaje con línea vertical gris a la izquierda */
+/* Cuerpo del mensaje con una línea vertical gris a la izquierda */
 .msg-cuerpo {
   font-size: 1.05rem;
   line-height: 1.65;
@@ -410,25 +583,26 @@ main {
 
 
 /* =============================================================
-   8. CARRUSEL
+   9. CARRUSEL
    
-   Estructura:
-     .carrusel-wrapper   → contenedor externo con animación de colapso
-       .carrusel         → ventana visible (overflow: hidden)
-         .carrusel-track → fila de tarjetas que se desliza con translateX
+   Jerarquía CSS del carrusel:
+     .carrusel-wrapper    → contenedor externo con animación de colapso
+       .carrusel          → ventana (overflow:hidden recorta el contenido)
+         .carrusel-track  → fila de tarjetas que JS mueve con translateX
            .tarjeta-carrusel × N
-       .carrusel-controles  → botones ← y → + dots
-       .barra-progreso      → línea de tiempo del autoplay
+       .carrusel-controles  → botones ← [dots] →
+       .barra-progreso      → barra de tiempo del autoplay (solo calendario)
 ============================================================= */
 
 /* La sección de calendario tiene un fondo con gradiente verde suave */
 .seccion-calendario {
-  background: linear-gradient(135deg, var(--verde-palido) 0%, var(--blanco) 60%);
+  background: var(--blanco);
 }
 
-/* Wrapper que se anima al colapsar/expandir.
-   max-height: 900px es el estado "abierto".
-   La clase .colapsado (añadida por JS) lo lleva a max-height: 0. */
+/* Wrapper animable.
+   max-height: 900px → estado abierto.
+   La clase .colapsado (añadida por JS) lo lleva a max-height: 0
+   con transición suave. */
 .carrusel-wrapper {
   overflow: hidden;
   transition: max-height .45s cubic-bezier(.4,0,.2,1), opacity .35s ease;
@@ -436,14 +610,14 @@ main {
   opacity: 1;
 }
 
-/* Estado colapsado: altura 0, invisible, no recibe clics */
+/* Estado colapsado: altura cero, invisible, no recibe clics */
 .carrusel-wrapper.colapsado {
   max-height: 0 !important;
   opacity: 0;
   pointer-events: none;
 }
 
-/* Ventana del carrusel: recorta todo lo que se salga de sus límites */
+/* Ventana del carrusel: recorta todo lo que se salga de su ancho */
 .carrusel {
   overflow: hidden;
   border-radius: var(--radio);
@@ -452,15 +626,17 @@ main {
 }
 
 /* Track: fila horizontal de tarjetas.
-   JS mueve este elemento con transform: translateX(-N%) */
+   JS lo mueve con: track.style.transform = "translateX(-N%)"
+   will-change: transform avisa al navegador para que cree una capa GPU
+   y acelere la animación. */
 .carrusel-track {
   display: flex;
-  transition: transform .55s cubic-bezier(.4,0,.2,1);   /* animación del deslizamiento */
-  will-change: transform;   /* le avisa al navegador para optimizar el render */
+  transition: transform .55s cubic-bezier(.4,0,.2,1);
+  will-change: transform;
 }
 
-/* Cada tarjeta ocupa exactamente el 100% del ancho del carrusel.
-   min-width: 100% asegura que ninguna se achique. */
+/* Cada tarjeta ocupa exactamente el 100% del ancho visible del carrusel.
+   min-width: 100% impide que se encojan. */
 .tarjeta-carrusel {
   min-width: 100%;
   background: var(--blanco);
@@ -488,7 +664,7 @@ main {
   margin-bottom: 6px;
 }
 
-/* Título grande: "Semana 1 · Lunes" o el título del mensaje */
+/* Título grande de la tarjeta: "Semana 1 · Lunes" o el título del mensaje */
 .carrusel-semana-dia {
   font-family: 'Playfair Display', serif;
   font-size: 1.7rem;
@@ -504,7 +680,7 @@ main {
   gap: 14px 28px;
 }
 
-/* Label en mayúsculas pequeñas encima del valor */
+/* Label en mayúsculas pequeñas encima del valor del metadato */
 .carrusel-campo label {
   font-size: .73rem;
   letter-spacing: .1em;
@@ -520,7 +696,8 @@ main {
   font-weight: 500;
 }
 
-/* Caja destacada del llamado a la acción (fondo verde pálido, borde dorado) */
+/* Caja destacada del llamado a la acción:
+   fondo verde pálido con borde dorado a la izquierda */
 .carrusel-accion {
   margin-top: 22px;
   padding: 14px 18px;
@@ -534,7 +711,7 @@ main {
   color: var(--verde);
 }
 
-/* Fila de controles: ← [dots] → */
+/* Fila de controles: [←] [dots] [→] */
 .carrusel-controles {
   display: flex;
   align-items: center;
@@ -578,14 +755,14 @@ main {
   padding: 0;
 }
 
-/* El punto del slide actual se vuelve verde y se agranda */
+/* El punto del slide activo se vuelve verde y se agranda un poco */
 .indicador.activo {
   background: var(--verde);
   transform: scale(1.3);
 }
 
-/* Barra de progreso (solo visible en el calendario con autoplay).
-   El relleno va de 0% a 100% en 15 s, animado por JS. */
+/* Barra de progreso — solo visible en el calendario con autoplay.
+   El relleno va de 0% a 100% en 15 s, controlado por JS. */
 .barra-progreso {
   height: 3px;
   background: var(--gris-claro);
@@ -599,10 +776,11 @@ main {
   background: linear-gradient(90deg, var(--verde), var(--acento));
   border-radius: 2px;
   width: 0%;
-  transition: width .1s linear;   /* JS sobrescribe esta transición dinámicamente */
+  /* JS sobrescribe esta transición dinámicamente con la duración real */
+  transition: width .1s linear;
 }
 
-/* Texto de ayuda debajo de los controles */
+/* Texto de ayuda debajo de los controles del carrusel */
 .carrusel-hint {
   text-align: center;
   font-size: .78rem;
@@ -613,9 +791,9 @@ main {
 
 
 /* =============================================================
-   9. AVISO DE SEGURIDAD
+   10. AVISO DE SEGURIDAD
    
-   Sección con fondo dorado suave y ícono de candado.
+   Sección con fondo dorado suave e ícono de candado.
    Informa que no se publican datos personales innecesarios.
 ============================================================= */
 .aviso-seguridad {
@@ -632,8 +810,9 @@ main {
   margin-top: 2px;
 }
 
+/* El título del aviso de seguridad es dorado oscuro (no verde) */
 .aviso-seguridad .seccion-titulo {
-  color: #7a5c1a;   /* dorado oscuro para el título */
+  color: #7a5c1a;
 }
 
 .aviso-seguridad p {
@@ -644,7 +823,7 @@ main {
 
 
 /* =============================================================
-   10. PIE DE PÁGINA
+   11. PIE DE PÁGINA
 ============================================================= */
 .pie {
   text-align: center;
@@ -657,18 +836,28 @@ main {
 
 
 /* =============================================================
-   11. RESPONSIVO — Móvil (pantallas ≤ 700px)
+   12. RESPONSIVO — Móvil (pantallas ≤ 700px)
    
-   En pantallas pequeñas:
-   - El header se reorganiza en columna (texto encima, deco abajo → se oculta)
-   - Las secciones tienen menos padding
-   - El grid de 2 columnas del carrusel pasa a 1 columna
+   Ajustes en pantallas pequeñas:
+   - El header se apila en columna (la decoración de círculos se oculta).
+   - Las secciones tienen menos padding.
+   - El grid de 2 columnas del carrusel pasa a 1 columna.
+   - El login ocupa todo el ancho disponible.
 ============================================================= */
 @media (max-width: 700px) {
-  .header-contenido { padding: 32px 20px 24px; flex-direction: column; gap: 24px; }
-  .header-top-bar, .header-nav { padding-left: 20px; padding-right: 20px; }
-  .header-deco { display: none; }         /* los círculos decorativos se ocultan */
-  .seccion { padding: 24px 18px; }
-  .tarjeta-carrusel { padding: 28px 22px; }
-  .carrusel-grid { grid-template-columns: 1fr; }   /* 1 columna en móvil */
+  /* Header */
+  .header-contenido    { padding: 32px 20px 24px; flex-direction: column; gap: 24px; }
+  .header-top-bar,
+  .header-nav          { padding-left: 20px; padding-right: 20px; }
+  .header-deco         { display: none; }  /* los círculos se ocultan en móvil */
+
+  /* Secciones */
+  .seccion             { padding: 24px 18px; }
+  .tarjeta-carrusel    { padding: 28px 22px; }
+
+  /* El grid de metadatos pasa a una sola columna */
+  .carrusel-grid       { grid-template-columns: 1fr; }
+
+  /* El formulario de login ocupa todo el ancho */
+  .login-caja          { max-width: 100%; }
 }
