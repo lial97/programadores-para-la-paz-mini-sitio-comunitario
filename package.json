@@ -2,15 +2,24 @@
     "name": "programadores-para-la-paz-mini-sitio-comunitario",
     "version": "1.0.0",
     "description": "Proyecto único de Semana 5: mini-sitio comunitario que consume API.",
+    "homepage": "https://github.com/lial97/programadores-para-la-paz-mini-sitio-comunitario#readme",
+    "bugs": {
+        "url": "https://github.com/lial97/programadores-para-la-paz-mini-sitio-comunitario/issues"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/lial97/programadores-para-la-paz-mini-sitio-comunitario.git"
+    },
+    "license": "MIT",
+    "author": "Programa Capacitación en Democracia y Tecnología",
+    "type": "commonjs",
     "main": "server.js",
     "scripts": {
-      "start": "node server.js",
-      "sitio": "node server.js"
+        "start": "node server.js",
+        "sitio": "node server.js"
     },
     "dependencies": {
-      "express": "^4.18.2"
+        "express": "^4.22.2"
     },
-    "author": "Programa Capacitación en Democracia y Tecnología",
-    "license": "MIT"
-  }
-  
+    "keywords": []
+}

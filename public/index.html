@@ -3,59 +3,232 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Mini-sitio comunitario</title>
+  <title>Programadores para la Paz — Mini-sitio Comunitario</title>
+
+  <!--
+    Fuentes de Google Fonts (se cargan desde internet):
+    - Playfair Display: serif elegante para títulos (header, h2, tarjetas)
+    - DM Sans: sans-serif limpia para el cuerpo de texto
+    Las dos líneas de "preconnect" aceleran la conexión inicial.
+  -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,700&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+
+  <!-- Hoja de estilos principal del proyecto -->
   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-  <header>
-    <h1>Mini-sitio comunitario</h1>
-    <p>
-      Proyecto único de Semana 5 para difusión responsable, calendario editorial y tablero de mensajes.
-    </p>
-  </header>
 
+  <!-- =========================================================
+       HEADER PRINCIPAL
+       Contiene: barra superior, título + decoración, navegación.
+       Todos los estilos están en styles.css bajo /* HEADER */
+  ========================================================= -->
+  <header class="header-principal">
+
+    <!-- Franja oscura superior con etiquetas de estado del proyecto -->
+    <div class="header-top-bar">
+      <span class="header-tag">🕊️ Comunidad activa</span>
+      <span class="header-tag">Semana 5</span>
+    </div>
+
+    <!-- Zona central: texto a la izquierda, decoración geométrica a la derecha -->
+    <div class="header-contenido">
+
+      <div class="header-texto">
+        <!-- Pequeño texto encima del título -->
+        <p class="header-eyebrow">Mini-sitio comunitario</p>
+
+        <!-- Título principal. <em> pone "para la Paz" en itálica dorada -->
+        <h1 class="header-titulo">Programadores<br><em>para la Paz</em></h1>
+
+        <p class="header-subtitulo">
+          Difusión responsable, calendario editorial y tablero de mensajes para nuestra comunidad.
+        </p>
+      </div>
+
+  </header><!-- fin header -->
+
+
+  <!-- =========================================================
+       CONTENIDO PRINCIPAL
+       Agrupa las tres secciones de la página.
+       max-width y centrado están definidos en styles.css (main).
+  ========================================================= -->
   <main>
-    <section>
-      <h2>Proyecto vivo en GitHub</h2>
-      <p>
-        La rama main será actualizada por los docentes. Cada estudiante trabajará en su rama personal.
-      </p>
-      <p>
-        Desde esta clase practicamos cómo traer mejoras del proyecto base y mantener la trazabilidad.
-      </p>
-    </section>
 
-    <section>
-      <h2>Tablero de mensajes comunitarios</h2>
-      <p>
-        Esta sección funciona como vitrina comunitaria. Debe mostrar información clara, legible y segura.
+    <!-- =======================================================
+         SECCIÓN 1: TABLERO DE MENSAJES
+         
+         Carrusel MANUAL (el usuario navega con las flechas).
+         Los datos vienen del servidor: GET /api/mensajes
+         → lee el archivo /data/mensajes.json
+         
+         Flujo:
+           1. Usuario hace clic en "Cargar mensajes"
+           2. app.js hace fetch("/api/mensajes")
+           3. Se construye el carrusel dentro de #contenedorMensajes
+           4. El botón pasa a "▲ Ocultar mensajes"
+           5. Clics siguientes colapsan/expanden el contenedor
+    ======================================================= -->
+    <section id="mensajes" class="seccion">
+
+      <!-- Cabecera fija de la sección (siempre visible) -->
+      <div class="seccion-cabeza">
+        <h2 class="seccion-titulo">Tablero de mensajes comunitarios</h2>
+        <p class="seccion-desc">Vitrina comunitaria con información clara, legible y responsable. Navega tú el ritmo.</p>
+
+        <!--
+          Botón principal de la sección.
+          app.js escucha el clic con: btnMensajes.addEventListener("click", ...)
+          La clase "abierto" se añade por JS cuando el carrusel está visible
+          (cambia el color del botón a gris).
+        -->
+        <button id="btnMensajes" class="btn-principal">Cargar mensajes</button>
+      </div>
+
+      <!--
+        Contenedor del carrusel de mensajes.
+        Arranca oculto (display:none). JS lo muestra después de cargar los datos.
+        La clase "colapsado" (añadida/quitada por JS) activa la animación de cierre.
+      -->
+      <div id="contenedorMensajes" class="carrusel-wrapper" style="display:none;">
+
+        <!-- Ventana del carrusel: solo muestra una tarjeta a la vez -->
+        <div class="carrusel">
+          <!--
+            Track: fila horizontal de tarjetas.
+            JS lo mueve con: track.style.transform = "translateX(-N%)"
+            Las tarjetas se inyectan aquí dinámicamente por app.js.
+          -->
+          <div class="carrusel-track" id="mensajesTrack"></div>
+        </div>
+
+        <!-- Controles de navegación manual -->
+        <div class="carrusel-controles">
+          <button class="ctrl-btn" id="btnMsgPrev" aria-label="Mensaje anterior">&#8592;</button>
+
+          <!--
+            Contenedor de los puntos indicadores (●).
+            app.js inyecta aquí un <button class="indicador"> por cada mensaje.
+            El punto del mensaje actual tiene la clase "activo".
+          -->
+          <div class="carrusel-indicadores" id="mensajesIndicadores"></div>
+
+          <button class="ctrl-btn" id="btnMsgNext" aria-label="Mensaje siguiente">&#8594;</button>
+        </div>
+
+        <!-- Texto de ayuda debajo de los controles -->
+        <p class="carrusel-hint">Usa las flechas para navegar entre mensajes</p>
+
+      </div><!-- fin #contenedorMensajes -->
+
+      <!--
+        Texto provisional que se muestra antes de cargar los datos.
+        app.js lo oculta con: mensajesPlaceholder.style.display = "none"
+      -->
+      <p id="mensajesPlaceholder" class="placeholder-txt">
+        Presiona el botón para ver los mensajes.
       </p>
-      <button id="btnMensajes">Cargar mensajes</button>
-      <div id="contenedorMensajes" class="tablero">
-        Aquí aparecerán los mensajes comunitarios.
+
+    </section><!-- fin #mensajes -->
+
+
+    <!-- =======================================================
+         SECCIÓN 2: CALENDARIO EDITORIAL
+         
+         Carrusel AUTOMÁTICO: cambia de slide cada 15 segundos.
+         Los datos vienen del servidor: GET /api/calendario
+         → lee el archivo /data/calendario-editorial.json
+         
+         Diferencias con mensajes:
+           - Tiene barra de progreso que muestra el tiempo restante
+           - El autoplay se pausa al colapsar y reanuda al expandir
+           - Al navegar con flechas/dots, el contador de 15 s se reinicia
+    ======================================================= -->
+    <section id="calendario" class="seccion seccion-calendario">
+
+      <!-- Cabecera fija de la sección -->
+      <div class="seccion-cabeza">
+        <h2 class="seccion-titulo">Calendario editorial</h2>
+        <p class="seccion-desc">
+          Publicaciones organizadas por fecha, tema, canal y público.
+          Cambia automáticamente cada 15 segundos.
+        </p>
+
+        <!-- Botón con el mismo comportamiento de toggle que el de mensajes -->
+        <button id="btnCalendario" class="btn-principal">Cargar calendario</button>
+      </div>
+
+      <!-- Contenedor del carrusel del calendario (mismo patrón que mensajes) -->
+      <div id="contenedorCalendario" class="carrusel-wrapper" style="display:none;">
+
+        <div class="carrusel">
+          <!-- Track del calendario. app.js inyecta las tarjetas aquí. -->
+          <div class="carrusel-track" id="carruselTrack"></div>
+        </div>
+
+        <!-- Controles de navegación (también funcionan en modo autoplay,
+             y reinician el contador de 15 s al usarse) -->
+        <div class="carrusel-controles">
+          <button class="ctrl-btn" id="btnPrev" aria-label="Anterior">&#8592;</button>
+          <div class="carrusel-indicadores" id="indicadores"></div>
+          <button class="ctrl-btn" id="btnNext" aria-label="Siguiente">&#8594;</button>
+        </div>
+
+        <!--
+          Barra de progreso del autoplay.
+          .barra-progreso es el fondo gris (contenedor).
+          .barra-relleno es la parte que se llena de verde a dorado en 15 s.
+          app.js controla el ancho de #barraRelleno con style.width.
+        -->
+        <div class="barra-progreso">
+          <div class="barra-relleno" id="barraRelleno"></div>
+        </div>
+
+        <p class="carrusel-hint">Cambia automáticamente cada 15 s</p>
+
+      </div><!-- fin #contenedorCalendario -->
+
+      <p id="calendarioPlaceholder" class="placeholder-txt">
+        Presiona el botón para ver el calendario.
+      </p>
+
+    </section><!-- fin #calendario -->
+
+
+    <!-- =======================================================
+         SECCIÓN 3: AVISO DE SEGURIDAD
+         
+         Sección informativa estática (sin interactividad).
+         Recuerda que la vista pública no expone datos personales.
+    ======================================================= -->
+    <section id="seguridad" class="seccion aviso-seguridad">
+      <div class="aviso-icono">🔒</div>
+      <div>
+        <h2 class="seccion-titulo">Seguridad visual y minimización de datos</h2>
+        <p>
+          La vista pública muestra solo la información necesaria para orientar a la comunidad.
+          No se exponen datos personales innecesarios.
+        </p>
       </div>
     </section>
 
-    <section>
-      <h2>Calendario editorial</h2>
-      <p>
-        El calendario editorial organiza publicaciones por fecha, tema, canal, público objetivo, responsable y fuente.
-      </p>
-      <button id="btnCalendario">Cargar calendario</button>
-      <div id="contenedorCalendario" class="tablero">
-        Aquí aparecerán las piezas del calendario editorial.
-      </div>
-    </section>
+  </main><!-- fin main -->
 
-    <section class="aviso-seguridad">
-      <h2>Seguridad visual y minimización de datos</h2>
-      <p>
-        La vista pública debe mostrar solo la información necesaria para orientar a la comunidad.
-        No debe exponer datos personales innecesarios.
-      </p>
-    </section>
-  </main>
 
+  <!-- Pie de página estático -->
+  <footer class="pie">
+    <p>Programadores para la Paz · Mini-sitio comunitario · Semana 5</p>
+  </footer>
+
+  <!--
+    Script principal cargado al final del body.
+    Cargarlo aquí (y no en el <head>) garantiza que todos los elementos
+    del DOM ya existen cuando el script intenta acceder a ellos con getElementById.
+  -->
   <script src="app.js"></script>
+
 </body>
 </html>
